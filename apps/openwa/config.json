@@ -1,0 +1,42 @@
+{
+  "name": "OpenWA",
+  "id": "openwa",
+  "available": true,
+  "short_desc": "Open-source WhatsApp API gateway with a built-in dashboard.",
+  "author": "rmyndharis",
+  "port": 2785,
+  "categories": ["development"],
+  "description": "Self-hosted WhatsApp API gateway with sessions, webhooks and a web dashboard.",
+  "tipi_version": 1,
+  "version": "0.27.1",
+  "source": "https://github.com/rmyndharis/OpenWA",
+  "exposable": true,
+  "supported_architectures": ["amd64"],
+  "created_at": 1793902391000,
+  "updated_at": 1793902391000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "random",
+      "label": "Database password",
+      "min": 32,
+      "env_variable": "OPENWA_DB_PASSWORD"
+    },
+    {
+      "type": "random",
+      "label": "API key pepper",
+      "min": 32,
+      "env_variable": "OPENWA_API_KEY_PEPPER"
+    },
+    {
+      "type": "password",
+      "label": "API master key",
+      "hint": "Seeds the admin key on first start only. Keep a copy: you need it for the dashboard and the API.",
+      "required": true,
+      "min": 32,
+      "regex": "^[A-Za-z0-9_-]{32,}$",
+      "pattern_error": "Use at least 32 letters, digits, dashes or underscores.",
+      "env_variable": "OPENWA_API_MASTER_KEY"
+    }
+  ]
+}

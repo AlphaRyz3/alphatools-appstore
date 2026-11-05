@@ -1,0 +1,34 @@
+x-runtipi:
+  schema_version: 2
+  # No per-architecture changes. The schema in @runtipi/common, used by the tests, requires the key.
+  overrides: []
+
+services:
+  vibravid:
+    image: ghcr.io/astraelabs/vibravid:v1.4.9
+    restart: unless-stopped
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    volumes:
+      - ${APP_DATA_DIR}/data/conf:/app/Conf
+      - ${APP_DATA_DIR}/data/db:/app/data
+      - ${APP_DATA_DIR}/data/logs:/app/.cache/logs
+      - ${APP_DATA_DIR}/data/binary:/home/appuser/.local/bin/binary
+      - /media/Media:/media/Media
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
+      - DJANGO_DEBUG=false
+      - DJANGO_DB_DIR=/app/data
+      # Both follow the host port and local subdomain chosen in Runtipi.
+      - ALLOWED_HOSTS=localhost,127.0.0.1,vibravid,${INTERNAL_IP},${LOCAL_DOMAIN},${APP_LOCAL_DOMAIN:-vibravid.${LOCAL_DOMAIN}}
+      - CSRF_TRUSTED_ORIGINS=http://${INTERNAL_IP}:${APP_PORT},http://${LOCAL_DOMAIN}:${APP_PORT},https://${APP_LOCAL_DOMAIN:-vibravid.${LOCAL_DOMAIN}}
+      - USE_X_FORWARDED_HOST=true
+      - SECURE_PROXY_SSL_HEADER_ENABLED=true
+    x-runtipi:
+      is_main: true
+      internal_port: 8000

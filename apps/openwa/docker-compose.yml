@@ -1,0 +1,101 @@
+x-runtipi:
+  schema_version: 2
+  # No per-architecture changes. The schema in @runtipi/common, used by the tests, requires the key.
+  overrides: []
+
+services:
+  openwa:
+    image: ghcr.io/rmyndharis/openwa:0.27.1
+    restart: unless-stopped
+    # Room for the app's ordered shutdown before Docker kills it (upstream value).
+    stop_grace_period: 75s
+    # Chromium runs with --no-sandbox, so the container is the confinement boundary (upstream hardening).
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - KILL
+      - SETGID
+      - SETUID
+    read_only: true
+    tmpfs:
+      - /tmp
+    pids_limit: 2048
+    mem_limit: 2g
+    volumes:
+      - ${APP_DATA_DIR}/data/app:/app/data
+    environment:
+      - NODE_ENV=production
+      - TZ=${TZ}
+      - HOME=/tmp
+      - XDG_CONFIG_HOME=/tmp/.config
+      - XDG_CACHE_HOME=/tmp/.cache
+      - PORT=2785
+      - API_MASTER_KEY=${OPENWA_API_MASTER_KEY}
+      # Set before the first start: changing it later locks out every API key.
+      - API_KEY_PEPPER=${OPENWA_API_KEY_PEPPER}
+      - DATABASE_TYPE=postgres
+      - DATABASE_HOST=openwa-db
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=openwa
+      - DATABASE_USERNAME=openwa
+      - DATABASE_PASSWORD=${OPENWA_DB_PASSWORD}
+      - DATABASE_SYNCHRONIZE=false
+      - REDIS_ENABLED=true
+      - REDIS_HOST=openwa-redis
+      - REDIS_PORT=6379
+      # Without this, the dashboard renders a blank page over plain HTTP on the app port.
+      - CSP_UPGRADE_INSECURE_REQUESTS=false
+      # Stable across recreates, so sessions do not wait out the old container's lease.
+      - NODE_ID=openwa
+      - AUTO_START_SESSIONS=true
+    depends_on:
+      openwa-db:
+        condition: service_healthy
+      openwa-redis:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:2785/api/health/ready']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    x-runtipi:
+      is_main: true
+      internal_port: 2785
+
+  openwa-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ${APP_DATA_DIR}/data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=openwa
+      - POSTGRES_PASSWORD=${OPENWA_DB_PASSWORD}
+      - POSTGRES_DB=openwa
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U openwa']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+
+  openwa-redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    command: redis-server --appendonly yes --maxmemory-policy noeviction
+    volumes:
+      - ${APP_DATA_DIR}/data/redis:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
