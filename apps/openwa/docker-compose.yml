@@ -53,6 +53,8 @@ services:
       # Stable across recreates, so sessions do not wait out the old container's lease.
       - NODE_ID=openwa
       - AUTO_START_SESSIONS=true
+      - MCP_ENABLED=${OPENWA_MCP_ENABLED:-true}
+      - MCP_READONLY=${OPENWA_MCP_READONLY:-true}
     depends_on:
       openwa-db:
         condition: service_healthy

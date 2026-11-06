@@ -13,6 +13,12 @@ This app runs OpenWA with PostgreSQL for data and Redis for cache and rate limit
 
 Open the dashboard, sign in with the master key, create a session and scan the QR code with WhatsApp.
 
+## MCP server
+
+The MCP endpoint for AI agents is on by default at `/mcp` on the app port, and read-only unless you turn that off. Both switches are in the app settings.
+
+Give each agent a dedicated, non-admin API key limited to its session, without an IP allow-list. Do not expose `/mcp` to the internet without an authenticating proxy.
+
 ## Updating
 
 Breaking changes ship in minor releases, so check the [release notes](https://github.com/rmyndharis/OpenWA/releases) before updating. Migrations run on start.
