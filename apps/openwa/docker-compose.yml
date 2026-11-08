@@ -5,7 +5,7 @@ x-runtipi:
 
 services:
   openwa:
-    image: ghcr.io/rmyndharis/openwa:0.29.0
+    image: ghcr.io/rmyndharis/openwa:0.29.1
     restart: unless-stopped
     # Room for the app's ordered shutdown before Docker kills it (upstream value).
     stop_grace_period: 75s
