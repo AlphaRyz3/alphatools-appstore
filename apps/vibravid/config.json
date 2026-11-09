@@ -5,15 +5,19 @@
   "short_desc": "Media downloader that plugs into Seerr, Sonarr and Radarr.",
   "author": "AstraeLabs",
   "port": 8765,
-  "categories": ["media"],
+  "categories": [
+    "media"
+  ],
   "description": "Downloads movies, series and anime requested through Seerr, Sonarr and Radarr.",
-  "tipi_version": 1,
-  "version": "v1.4.9",
+  "tipi_version": 2,
+  "version": "v1.5.0",
   "source": "https://github.com/AstraeLabs/VibraVid",
   "exposable": true,
-  "supported_architectures": ["amd64"],
+  "supported_architectures": [
+    "amd64"
+  ],
   "created_at": 1793902391000,
-  "updated_at": 1793902391000,
+  "updated_at": 1794214459376,
   "dynamic_config": true,
   "form_fields": []
 }
