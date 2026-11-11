@@ -9,15 +9,15 @@
     "development"
   ],
   "description": "Self-hosted WhatsApp API gateway with sessions, webhooks and a web dashboard.",
-  "tipi_version": 4,
-  "version": "0.29.1",
+  "tipi_version": 5,
+  "version": "0.30.0",
   "source": "https://github.com/rmyndharis/OpenWA",
   "exposable": true,
   "supported_architectures": [
     "amd64"
   ],
   "created_at": 1793902391000,
-  "updated_at": 1794126235001,
+  "updated_at": 1794386449394,
   "dynamic_config": true,
   "form_fields": [
     {
